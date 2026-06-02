@@ -31,7 +31,7 @@ impl AppState {
         std::fs::create_dir_all(&recordings_dir)?;
 
         let settings = Arc::new(SettingsStore::load_or_default(&app_data_dir)?);
-        let models = Arc::new(ModelManager::new(models_dir.clone())?);
+        let models = Arc::new(ModelManager::new(models_dir.clone())?.with_app(_app.clone()));
         let history = Arc::new(Mutex::new(HistoryStore::open(&app_data_dir)?));
 
         Ok(Self {

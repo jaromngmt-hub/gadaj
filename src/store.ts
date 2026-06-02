@@ -110,14 +110,44 @@ export const useAppStore = create<AppState>((set, get) => ({
       ),
     });
     try {
-      const { invoke } = await import("@tauri-apps/api/core");
-      await invoke("download_model", { id });
-      await get().loadModels();
+      // Nasłuchuj eventów postępu z backendu
+      const { listen } = await import("@tauri-apps/api/event");
+      const unlisten = await listen<{
+        id: string;
+        progress: number;
+        downloaded_bytes: number;
+        total_bytes: number;
+      }>("model-download-progress", (event) => {
+        if (event.payload.id !== id) return;
+        const { progress, downloaded_bytes, total_bytes } = event.payload;
+        set({
+          models: get().models.map((m) =>
+            m.id === id
+              ? {
+                  ...m,
+                  progress,
+                  sizeBytes: total_bytes || m.sizeBytes,
+                  downloading: progress < 100,
+                }
+              : m,
+          ),
+        });
+        console.log(
+          `Download ${id}: ${progress}% (${(downloaded_bytes / 1e6).toFixed(1)}/${(total_bytes / 1e6).toFixed(1)} MB)`,
+        );
+      });
+      try {
+        const { invoke } = await import("@tauri-apps/api/core");
+        await invoke("download_model", { id });
+        await get().loadModels();
+      } finally {
+        await unlisten();
+      }
     } catch (e) {
       console.error("download_model failed", e);
       set({
         models: get().models.map((m) =>
-          m.id === id ? { ...m, downloading: false } : m,
+          m.id === id ? { ...m, downloading: false, progress: 0 } : m,
         ),
       });
     }

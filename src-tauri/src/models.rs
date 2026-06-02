@@ -6,6 +6,7 @@ use std::time::Duration;
 
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
+use tauri::{AppHandle, Emitter};
 
 use crate::stt::parakeet::{
     PARAKEET_V3_FILENAME, PARAKEET_V3_SIZE_BYTES, PARAKEET_V3_URL,
@@ -32,9 +33,18 @@ pub struct ModelInfo {
     pub progress: u8,
 }
 
+#[derive(Debug, Clone, Serialize)]
+struct DownloadProgress {
+    id: String,
+    progress: u8,
+    downloaded_bytes: u64,
+    total_bytes: u64,
+}
+
 pub struct ModelManager {
     models_dir: PathBuf,
     progress: Arc<Mutex<std::collections::HashMap<String, u8>>>,
+    app: Option<AppHandle>,
 }
 
 impl ModelManager {
@@ -43,7 +53,13 @@ impl ModelManager {
         Ok(Self {
             models_dir,
             progress: Arc::new(Mutex::new(Default::default())),
+            app: None,
         })
+    }
+
+    pub fn with_app(mut self, app: AppHandle) -> Self {
+        self.app = Some(app);
+        self
     }
 
     pub fn list(&self) -> Vec<ModelInfo> {
@@ -92,7 +108,21 @@ impl ModelManager {
             .unwrap_or(false)
     }
 
-    /// Pobiera model w sposób blokujący. Aktualizuje `progress` w trakcie pobierania.
+    fn emit_progress(&self, id: &str, pct: u8, downloaded: u64, total: u64) {
+        if let Some(app) = &self.app {
+            let _ = app.emit(
+                "model-download-progress",
+                DownloadProgress {
+                    id: id.to_string(),
+                    progress: pct,
+                    downloaded_bytes: downloaded,
+                    total_bytes: total,
+                },
+            );
+        }
+    }
+
+    /// Pobiera model w sposób blokujący. Aktualizuje `progress` i emituje eventy.
     pub async fn download(&self, id: &str) -> Result<(), String> {
         let desc = self
             .descriptor(id)
@@ -102,6 +132,7 @@ impl ModelManager {
 
         log::info!("Pobieram model {} z {}", desc.id, desc.url);
         self.progress.lock().insert(desc.id.clone(), 0);
+        self.emit_progress(&desc.id, 0, 0, 0);
 
         let client = reqwest::Client::builder()
             .timeout(Duration::from_secs(60 * 30))
@@ -137,6 +168,8 @@ impl ModelManager {
             if pct != last_report {
                 last_report = pct;
                 self.progress.lock().insert(desc.id.clone(), pct);
+                self.emit_progress(&desc.id, pct, downloaded, total);
+                log::debug!("Download progress: {}% ({} / {} bytes)", pct, downloaded, total);
             }
         }
         file.flush().await.map_err(|e| e.to_string())?;
@@ -147,6 +180,7 @@ impl ModelManager {
             .map_err(|e| format!("Nie mogę sfinalizować pliku: {e}"))?;
 
         self.progress.lock().insert(desc.id.clone(), 100);
+        self.emit_progress(&desc.id, 100, total, total);
         log::info!("Pobrano model: {}", dest.display());
         Ok(())
     }
