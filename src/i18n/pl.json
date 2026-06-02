@@ -1,0 +1,88 @@
+{
+  "app": {
+    "name": "Gadaj",
+    "tagline": "Polskie dyktowanie offline"
+  },
+  "nav": {
+    "onboarding": "Pierwsze kroki",
+    "settings": "Ustawienia",
+    "history": "Historia",
+    "about": "O programie"
+  },
+  "onboarding": {
+    "welcome": "Witaj w Gadaj",
+    "intro": "Apka do dyktowania offline. Naciskasz klawisz, mówisz, puszczasz — tekst pojawia się tam, gdzie masz kursor.",
+    "step1Title": "1. Wybierz klawisz dyktowania",
+    "step1Desc": "To będzie klawisz, który trzymasz wciśnięty podczas mówienia.",
+    "step2Title": "2. Pobierz model językowy",
+    "step2Desc": "Model Parakeet V3 multilingual (polski + 25 innych języków). Pobieranie ~150MB.",
+    "step3Title": "3. Gotowe!",
+    "step3Desc": "Przytrzymaj klawisz dyktowania, mów, puść — tekst wklei się automatycznie.",
+    "recordKey": "Nagrywaj klawisz",
+    "pressAnyKey": "Naciśnij dowolny klawisz...",
+    "skipKey": "Pomiń (ustawię później)",
+    "downloadModel": "Pobierz model",
+    "downloading": "Pobieranie...",
+    "finish": "Zakończ",
+    "openSettings": "Otwórz ustawienia"
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "hotkey": "Klawisz dyktowania",
+    "hotkeyDesc": "Przytrzymaj ten klawisz, aby dyktować.",
+    "model": "Model",
+    "modelDesc": "Wybierz model rozpoznawania mowy.",
+    "download": "Pobierz",
+    "downloaded": "Pobrano",
+    "notDownloaded": "Nie pobrano",
+    "language": "Język dyktowania",
+    "languageDesc": "Auto wykrywa język, lub wybierz konkretny.",
+    "languageAuto": "Automatyczny",
+    "pasteMethod": "Metoda wklejania",
+    "pasteMethodDesc": "Jak tekst ma trafić do aktywnego okna.",
+    "pasteAuto": "Automatyczne wklejanie (Cmd/Ctrl+V)",
+    "pasteClipboard": "Tylko schowek",
+    "ui": "Język interfejsu",
+    "uiDesc": "Język napisów w aplikacji.",
+    "save": "Zapisz"
+  },
+  "history": {
+    "title": "Historia transkrypcji",
+    "empty": "Brak transkrypcji. Zadzwoń coś!",
+    "search": "Szukaj w historii...",
+    "copy": "Kopiuj",
+    "paste": "Wklej",
+    "delete": "Usuń",
+    "play": "Odtwórz nagranie",
+    "deleteConfirm": "Czy na pewno usunąć tę transkrypcję?",
+    "exportMd": "Eksport do Markdown",
+    "savedAt": "Zapisano: {{date}}"
+  },
+  "status": {
+    "idle": "Gotowy",
+    "recording": "Nagrywanie...",
+    "transcribing": "Transkrypcja...",
+    "pasting": "Wklejanie...",
+    "error": "Błąd",
+    "pressKeyToStart": "Przytrzymaj klawisz dyktowania"
+  },
+  "model": {
+    "parakeetV3": "Parakeet TDT 0.6B V3 (wielojęzyczny)",
+    "parakeetV3Desc": "Polski + 25 języków. ~150MB."
+  },
+  "errors": {
+    "micDenied": "Brak dostępu do mikrofonu. Sprawdź uprawnienia w Ustawieniach systemowych.",
+    "modelNotLoaded": "Model nie jest załadowany.",
+    "modelDownloadFailed": "Nie udało się pobrać modelu.",
+    "transcriptionFailed": "Transkrypcja nie powiodła się.",
+    "noKeyConfigured": "Nie wybrano klawisza dyktowania. Ustaw go w Ustawieniach."
+  },
+  "common": {
+    "yes": "Tak",
+    "no": "Nie",
+    "cancel": "Anuluj",
+    "ok": "OK",
+    "save": "Zapisz",
+    "close": "Zamknij"
+  }
+}

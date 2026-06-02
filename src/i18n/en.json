@@ -1,0 +1,88 @@
+{
+  "app": {
+    "name": "Gadaj",
+    "tagline": "Offline Polish dictation"
+  },
+  "nav": {
+    "onboarding": "Get started",
+    "settings": "Settings",
+    "history": "History",
+    "about": "About"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Gadaj",
+    "intro": "An offline dictation app. Press a key, speak, release — your words appear where your cursor is.",
+    "step1Title": "1. Choose a dictation key",
+    "step1Desc": "This is the key you hold while speaking.",
+    "step2Title": "2. Download the language model",
+    "step2Desc": "Parakeet V3 multilingual model (Polish + 25 other languages). ~150MB download.",
+    "step3Title": "3. Done!",
+    "step3Desc": "Hold the dictation key, speak, release — text pastes automatically.",
+    "recordKey": "Record key",
+    "pressAnyKey": "Press any key...",
+    "skipKey": "Skip (I'll set it later)",
+    "downloadModel": "Download model",
+    "downloading": "Downloading...",
+    "finish": "Finish",
+    "openSettings": "Open settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "hotkey": "Dictation key",
+    "hotkeyDesc": "Hold this key to dictate.",
+    "model": "Model",
+    "modelDesc": "Choose speech recognition model.",
+    "download": "Download",
+    "downloaded": "Downloaded",
+    "notDownloaded": "Not downloaded",
+    "language": "Dictation language",
+    "languageDesc": "Auto-detect or pick a specific one.",
+    "languageAuto": "Automatic",
+    "pasteMethod": "Paste method",
+    "pasteMethodDesc": "How the text reaches the active window.",
+    "pasteAuto": "Auto-paste (Cmd/Ctrl+V)",
+    "pasteClipboard": "Clipboard only",
+    "ui": "UI language",
+    "uiDesc": "App interface language.",
+    "save": "Save"
+  },
+  "history": {
+    "title": "Transcription history",
+    "empty": "No transcriptions yet. Say something!",
+    "search": "Search history...",
+    "copy": "Copy",
+    "paste": "Paste",
+    "delete": "Delete",
+    "play": "Play recording",
+    "deleteConfirm": "Delete this transcription?",
+    "exportMd": "Export to Markdown",
+    "savedAt": "Saved: {{date}}"
+  },
+  "status": {
+    "idle": "Ready",
+    "recording": "Recording...",
+    "transcribing": "Transcribing...",
+    "pasting": "Pasting...",
+    "error": "Error",
+    "pressKeyToStart": "Hold the dictation key"
+  },
+  "model": {
+    "parakeetV3": "Parakeet TDT 0.6B V3 (multilingual)",
+    "parakeetV3Desc": "Polish + 25 languages. ~150MB."
+  },
+  "errors": {
+    "micDenied": "Microphone access denied. Check system permissions.",
+    "modelNotLoaded": "Model is not loaded.",
+    "modelDownloadFailed": "Failed to download model.",
+    "transcriptionFailed": "Transcription failed.",
+    "noKeyConfigured": "No dictation key configured. Set it in Settings."
+  },
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "save": "Save",
+    "close": "Close"
+  }
+}

@@ -1,0 +1,51 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# build outputs
+dist/
+dist-ssr/
+*.local
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun-debug.log*
+*.log
+
+# tauri
+src-tauri/target/
+src-tauri/Cargo.lock
+src-tauri/gen/
+src-tauri/icons/icon.iconset/
+
+# generated FFI bindings
+src-tauri/src/stt/parakeet_bindings.rs
+
+# parakeet.cpp build (submodule) - keep source, ignore build
+vendor/parakeet.cpp/build/
+vendor/parakeet.cpp/build-shared/
+vendor/parakeet.cpp/models/*.gguf
+vendor/parakeet.cpp/.venv/
+vendor/parakeet.cpp/_test_models/
+
+# app data
+*.wav
+*.mp3
+*.m4a

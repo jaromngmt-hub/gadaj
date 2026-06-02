@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Gadaj",
+  "version": "0.1.0",
+  "identifier": "pl.gadaj.app",
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Gadaj",
+        "width": 760,
+        "height": 600,
+        "minWidth": 600,
+        "minHeight": 480,
+        "resizable": true,
+        "decorations": true,
+        "transparent": false,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x.png",
+      "icons/128x.png",
+      "icons/128x@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Productivity",
+    "shortDescription": "Polska apka do dyktowania offline",
+    "longDescription": "Gadaj to lekka, open-source'owa apka desktopowa do dyktowania głosem. Naciskasz klawisz, mówisz, puszczasz — tekst wkleja się tam, gdzie masz kursor. Wszystko offline, prywatnie, po polsku.",
+    "macOS": {
+      "minimumSystemVersion": "10.15"
+    }
+  }
+}
