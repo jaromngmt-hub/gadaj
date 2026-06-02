@@ -27,7 +27,6 @@
     "clipboard-manager:default",
     "clipboard-manager:allow-write-text",
     "clipboard-manager:allow-read-text",
-    "updater:default",
     "autostart:default"
   ]
 }

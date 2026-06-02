@@ -93,9 +93,10 @@ fn main() {
         println!("cargo:rustc-link-lib=framework=Foundation");
         println!("cargo:rustc-link-lib=framework=Metal");
         println!("cargo:rustc-link-lib=framework=MetalKit");
-        // rpath żeby runtime znalazł ggml dyliby
+        // rpath dla dev mode (bin obok dylib w target/debug/)
         println!("cargo:rustc-link-arg=-Wl,-rpath,@executable_path");
-        println!("cargo:rustc-link-arg=-Wl,-rpath,@executable_path/../../../Frameworks");
+        // rpath dla bundled .app (Contents/MacOS/ → Contents/Frameworks/)
+        println!("cargo:rustc-link-arg=-Wl,-rpath,@executable_path/../Frameworks");
     }
     if cfg!(target_os = "linux") {
         println!("cargo:rustc-link-lib=dylib=ggml");

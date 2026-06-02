@@ -3,15 +3,15 @@
 //! Architektura: Tauri 2 + Rust core + React/TS frontend.
 //! Pipeline: capture audio → VAD → resample → parakeet.cpp → clipboard → paste.
 
-mod audio;
-mod commands;
-mod history;
-mod input;
-mod models;
-mod pipeline;
-mod settings;
-mod state;
-mod stt;
+pub mod audio;
+pub mod commands;
+pub mod history;
+pub mod input;
+pub mod models;
+pub mod pipeline;
+pub mod settings;
+pub mod state;
+pub mod stt;
 
 use std::sync::Arc;
 use tauri::{Manager, WindowEvent};
@@ -21,9 +21,8 @@ use crate::pipeline::Pipeline;
 use crate::state::AppState;
 
 pub fn run() {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
-        .format_timestamp_millis()
-        .init();
+    // Logger inicjalizuje tauri-plugin-log (Stdout + plik w log dir)
+    // - nie inicjujemy env_logger bo koliduje z pluginem log
 
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
@@ -40,7 +39,6 @@ pub fn run() {
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_clipboard_manager::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             None,

@@ -79,7 +79,7 @@ impl ModelManager {
         vec![ModelDescriptor {
             id: "parakeet-tdt-0.6b-v3".to_string(),
             name: "Parakeet TDT 0.6B V3 (wielojęzyczny)".to_string(),
-            description: "Polski + 25 języków. Wysoka jakość, ~180MB.".to_string(),
+            description: "Polski + 25 języków. Wysoka jakość, ~675MB (Q4_K).".to_string(),
             size_bytes: PARAKEET_V3_SIZE_BYTES,
             url: PARAKEET_V3_URL.to_string(),
             filename: PARAKEET_V3_FILENAME.to_string(),

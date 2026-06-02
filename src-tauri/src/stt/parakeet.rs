@@ -12,9 +12,9 @@ use std::path::Path;
 use parking_lot::Mutex;
 
 pub const PARAKEET_V3_URL: &str =
-    "https://huggingface.co/mudler/parakeet-cpp-gguf/resolve/main/parakeet-tdt-0.6b-v3-q4_k.gguf";
-pub const PARAKEET_V3_SIZE_BYTES: u64 = 180 * 1024 * 1024; // ~180MB
-pub const PARAKEET_V3_FILENAME: &str = "parakeet-tdt-0.6b-v3-q4_k.gguf";
+    "https://huggingface.co/mudler/parakeet-cpp-gguf/resolve/main/tdt-0.6b-v3-q4_k.gguf";
+pub const PARAKEET_V3_SIZE_BYTES: u64 = 675 * 1024 * 1024; // ~675MB
+pub const PARAKEET_V3_FILENAME: &str = "tdt-0.6b-v3-q4_k.gguf";
 
 /// Trait abstrakcyjny nad silnikiem STT - ułatwia mockowanie i testy.
 pub trait SttEngine: Send + Sync {

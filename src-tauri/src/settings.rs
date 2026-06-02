@@ -4,7 +4,7 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings {
     /// Skrót dyktowania w formacie np. "Alt+Left", "F13", "Alt+Space"
     #[serde(default)]
@@ -38,6 +38,18 @@ fn default_paste_method() -> String {
 }
 fn default_ui_language() -> String {
     "pl".to_string()
+}
+
+impl Default for Settings {
+    fn default() -> Self {
+        Self {
+            hotkey: None,
+            model_id: default_model_id(),
+            language: default_language(),
+            paste_method: default_paste_method(),
+            ui_language: default_ui_language(),
+        }
+    }
 }
 
 pub struct SettingsStore {

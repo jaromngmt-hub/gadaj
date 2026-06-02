@@ -20,6 +20,39 @@ pub struct HistoryStore {
     conn: Mutex<Connection>,
 }
 
+/// Zamienia polskie litery diakrytyczne na ich odpowiedniki bez ogonków,
+/// żeby FTS5 (który nie ma wbudowanego "polskiego" stemmera) mógł matchować
+/// `łódź` z `lodz` itp. Nie zmienia oryginału w tabeli `history` -
+/// tylko tekst wprowadzany do FTS.
+fn normalize_for_fts(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.chars() {
+        let replacement: char = match c {
+            'ą' => 'a',
+            'ć' => 'c',
+            'ę' => 'e',
+            'ł' => 'l',
+            'ń' => 'n',
+            'ó' => 'o',
+            'ś' => 's',
+            'ź' => 'z',
+            'ż' => 'z',
+            'Ą' => 'A',
+            'Ć' => 'C',
+            'Ę' => 'E',
+            'Ł' => 'L',
+            'Ń' => 'N',
+            'Ó' => 'O',
+            'Ś' => 'S',
+            'Ź' => 'Z',
+            'Ż' => 'Z',
+            _ => c,
+        };
+        out.push(replacement);
+    }
+    out
+}
+
 impl HistoryStore {
     pub fn open(dir: &Path) -> Result<Self, rusqlite::Error> {
         let path = dir.join("history.sqlite");
@@ -35,25 +68,13 @@ impl HistoryStore {
                 duration_ms INTEGER NOT NULL DEFAULT 0
             );
 
+            -- FTS jest niezależną tabelą (bez content='history')
+            -- bo SQLite zabrania triggerom INSERT do 'content' FTS5.
+            -- Zamiast tego: wstawiamy znormalizowany tekst z aplikacji (Rust).
             CREATE VIRTUAL TABLE IF NOT EXISTS history_fts USING fts5(
                 text,
-                content='history',
-                content_rowid='id',
-                tokenize='unicode61 remove_diacritics 2'
+                tokenize='unicode61'
             );
-
-            CREATE TRIGGER IF NOT EXISTS history_ai AFTER INSERT ON history BEGIN
-                INSERT INTO history_fts(rowid, text) VALUES (new.id, new.text);
-            END;
-
-            CREATE TRIGGER IF NOT EXISTS history_ad AFTER DELETE ON history BEGIN
-                INSERT INTO history_fts(history_fts, rowid, text) VALUES('delete', old.id, old.text);
-            END;
-
-            CREATE TRIGGER IF NOT EXISTS history_au AFTER UPDATE ON history BEGIN
-                INSERT INTO history_fts(history_fts, rowid, text) VALUES('delete', old.id, old.text);
-                INSERT INTO history_fts(rowid, text) VALUES (new.id, new.text);
-            END;
             "#,
         )?;
         Ok(Self {
@@ -74,14 +95,21 @@ impl HistoryStore {
             "INSERT INTO history (text, created_at, audio_path, language, duration_ms) VALUES (?, ?, ?, ?, ?)",
             params![text, now, audio_path, language, duration_ms],
         )?;
-        Ok(conn.last_insert_rowid())
+        let id = conn.last_insert_rowid();
+        // Mirror do FTS z normalizacją polskich znaków
+        let normalized = normalize_for_fts(text);
+        conn.execute(
+            "INSERT INTO history_fts(rowid, text) VALUES (?, ?)",
+            params![id, normalized],
+        )?;
+        Ok(id)
     }
 
     pub fn list(&self, query: Option<&str>, limit: i64) -> Result<Vec<HistoryEntry>, rusqlite::Error> {
         let conn = self.conn.lock();
         if let Some(q) = query.filter(|s| !s.trim().is_empty()) {
-            // Sanityzacja FTS5 - escapujemy cudzysłowy
-            let safe = q.replace('"', "");
+            // Sanityzacja FTS5 - escapujemy cudzysłowy i normalizujemy query
+            let safe = normalize_for_fts(q).replace('"', "");
             let mut stmt = conn.prepare(
                 "SELECT h.id, h.text, h.created_at, h.audio_path, h.language, h.duration_ms
                  FROM history_fts f
@@ -117,6 +145,7 @@ impl HistoryStore {
 
     pub fn delete(&self, id: i64) -> Result<(), rusqlite::Error> {
         let conn = self.conn.lock();
+        conn.execute("DELETE FROM history_fts WHERE rowid = ?", params![id])?;
         conn.execute("DELETE FROM history WHERE id = ?", params![id])?;
         Ok(())
     }
@@ -130,5 +159,21 @@ impl HistoryStore {
         } else {
             Ok(None)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalize_removes_polish_chars() {
+        assert_eq!(normalize_for_fts("Łódź"), "Lodz");
+        assert_eq!(normalize_for_fts("Kraków"), "Krakow");
+        assert_eq!(normalize_for_fts("Gdańsk"), "Gdansk");
+        assert_eq!(normalize_for_fts("Ściana"), "Sciana");
+        assert_eq!(normalize_for_fts("Żółw"), "Zolw");
+        assert_eq!(normalize_for_fts("Białystok"), "Bialystok");
+        assert_eq!(normalize_for_fts("hello world"), "hello world");
     }
 }

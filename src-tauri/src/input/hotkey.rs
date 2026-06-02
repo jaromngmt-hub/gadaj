@@ -151,7 +151,7 @@ struct ParsedHotkey {
     mods: Vec<Mod>,
 }
 
-fn parse_hotkey(s: &str) -> ParsedHotkey {
+pub fn parse_hotkey(s: &str) -> ParsedHotkey {
     use rdev::Key;
     let parts: Vec<String> = s.split('+').map(|p| p.trim().to_string()).collect();
     let mut mods = Vec::new();
@@ -255,4 +255,71 @@ fn parse_hotkey(s: &str) -> ParsedHotkey {
 fn parse_hotkey_owned(s: &str) -> (rdev::Key, Vec<Mod>) {
     let p = parse_hotkey(s);
     (p.key, p.mods)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rdev::Key;
+
+    #[test]
+    fn parses_space_with_modifier() {
+        let p = parse_hotkey("Alt+Space");
+        assert_eq!(p.key, Key::Space);
+        assert_eq!(p.mods, vec![Mod::Alt]);
+    }
+
+    #[test]
+    fn parses_cmd_shift_space() {
+        let p = parse_hotkey("Cmd+Shift+Space");
+        assert_eq!(p.key, Key::Space);
+        assert!(p.mods.contains(&Mod::Cmd));
+        assert!(p.mods.contains(&Mod::Shift));
+    }
+
+    #[test]
+    fn parses_single_letter() {
+        let p = parse_hotkey("Ctrl+A");
+        assert_eq!(p.key, Key::KeyA);
+        assert_eq!(p.mods, vec![Mod::Ctrl]);
+    }
+
+    #[test]
+    fn parses_function_key() {
+        let p = parse_hotkey("F12");
+        assert_eq!(p.key, Key::F12);
+        assert!(p.mods.is_empty());
+    }
+
+    #[test]
+    fn parses_cmd_ctrl_alias() {
+        let p = parse_hotkey("Cmd/Ctrl+K");
+        assert_eq!(p.key, Key::KeyK);
+        #[cfg(target_os = "macos")]
+        assert_eq!(p.mods, vec![Mod::Cmd]);
+        #[cfg(not(target_os = "macos"))]
+        assert_eq!(p.mods, vec![Mod::Ctrl]);
+    }
+
+    #[test]
+    fn parses_arrow_keys() {
+        assert_eq!(parse_hotkey("Up").key, Key::UpArrow);
+        assert_eq!(parse_hotkey("Down").key, Key::DownArrow);
+        assert_eq!(parse_hotkey("Left").key, Key::LeftArrow);
+        assert_eq!(parse_hotkey("Right").key, Key::RightArrow);
+    }
+
+    #[test]
+    fn parses_escape_enter_tab() {
+        assert_eq!(parse_hotkey("Escape").key, Key::Escape);
+        assert_eq!(parse_hotkey("Enter").key, Key::Return);
+        assert_eq!(parse_hotkey("Return").key, Key::Return);
+        assert_eq!(parse_hotkey("Tab").key, Key::Tab);
+    }
+
+    #[test]
+    fn parses_numbers() {
+        assert_eq!(parse_hotkey("5").key, Key::Num5);
+        assert_eq!(parse_hotkey("0").key, Key::Num0);
+    }
 }
